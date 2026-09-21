@@ -1,0 +1,30 @@
+# Node / React
+node_modules/
+dist/
+
+# Spring Boot
+target/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Logs
+*.log
+
+# Operating system
+.DS_Store
+Thumbs.db

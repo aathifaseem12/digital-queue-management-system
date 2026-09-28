@@ -1,0 +1,19 @@
+:root {
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  color: #213547;
+  background: #ffffff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+}

@@ -1811,4 +1811,252 @@ button {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  /* =========================================
+   READABILITY / FONT SCALE IMPROVEMENTS
+========================================= */
+
+/* Header */
+
+.dashboard-brand-text {
+  font-size: 25px;
+}
+
+.dashboard-nav button {
+  font-size: 14px;
+}
+
+.profile-info span {
+  font-size: 13px;
+}
+
+.profile-info small {
+  font-size: 11px;
+}
+
+.profile-arrow {
+  font-size: 16px;
+}
+
+/* Hero */
+
+.dashboard-eyebrow,
+.section-eyebrow {
+  font-size: 12px;
+}
+
+.dashboard-hero h1 {
+  font-size: clamp(38px, 4vw, 58px);
+}
+
+.dashboard-hero > div:first-child > p:last-child {
+  font-size: 15px;
+}
+
+.status-indicator {
+  font-size: 10px;
+}
+
+.dashboard-status-card > strong {
+  font-size: 42px;
+}
+
+.dashboard-status-card > p {
+  font-size: 13px;
+}
+
+.dashboard-status-card > small {
+  font-size: 11px;
+}
+
+/* Section titles */
+
+.section-title-row h2 {
+  font-size: 27px;
+}
+
+.services-heading span {
+  font-size: 13px;
+}
+
+/* Empty queue */
+
+.empty-queue-banner strong {
+  font-size: 14px;
+}
+
+.empty-queue-banner p {
+  font-size: 12px;
+}
+
+.empty-queue-banner > button {
+  font-size: 11px;
+  padding: 11px 16px;
+}
+
+/* Active queue */
+
+.active-queue-main span,
+.queue-stat span {
+  font-size: 11px;
+}
+
+.active-queue-main h3 {
+  font-size: 16px;
+}
+
+.active-queue-main p {
+  font-size: 11px;
+}
+
+.queue-stat strong {
+  font-size: 20px;
+}
+
+.queue-ticket strong {
+  font-size: 25px;
+}
+
+.leave-queue-button {
+  font-size: 11px;
+}
+
+/* Search and categories */
+
+.service-search {
+  height: 47px;
+}
+
+.service-search input {
+  font-size: 13px;
+}
+
+.category-list button {
+  font-size: 11px;
+  padding: 10px 14px;
+}
+
+/* Service cards */
+
+.service-category {
+  font-size: 10px;
+}
+
+.service-card-content h3 {
+  font-size: 18px;
+}
+
+.service-card-content p {
+  font-size: 12px;
+}
+
+.service-meta span {
+  font-size: 10px;
+}
+
+.service-meta strong {
+  font-size: 14px;
+}
+
+.service-status {
+  font-size: 9px;
+}
+
+.join-queue-button {
+  height: 44px;
+  font-size: 12px;
+}
+
+/* No services */
+
+.no-services h3 {
+  font-size: 17px;
+}
+
+.no-services p {
+  font-size: 12px;
+}
+
+.no-services button {
+  font-size: 11px;
+}
+
+/* Help */
+
+.dashboard-help strong {
+  font-size: 14px;
+}
+
+.dashboard-help p {
+  font-size: 11px;
+}
+
+.dashboard-help > button {
+  font-size: 11px;
+}
+
+/* Modal */
+
+.modal-eyebrow {
+  font-size: 11px;
+}
+
+.queue-modal h2 {
+  font-size: 26px;
+}
+
+.modal-description {
+  font-size: 12px;
+}
+
+.modal-stats span {
+  font-size: 10px;
+}
+
+.modal-stats strong {
+  font-size: 16px;
+}
+
+.modal-notice p {
+  font-size: 11px;
+}
+
+.modal-actions button {
+  font-size: 12px;
+}
+
+/* Notification */
+
+.dashboard-toast {
+  font-size: 11px;
+}
+
+/* Footer */
+
+.dashboard-footer {
+  font-size: 10px;
+}
+
+.dashboard-brand-text.dark {
+  font-size: 18px;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .dashboard-hero h1 {
+    font-size: 35px;
+  }
+
+  .service-card-content h3 {
+    font-size: 17px;
+  }
+
+  .service-card-content p {
+    font-size: 12px;
+  }
+
+  .dashboard-brand-text {
+    font-size: 21px;
+  }
+}
 }

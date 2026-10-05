@@ -56,8 +56,8 @@ function LoginPage() {
       return;
     }
 
-    if (formData.role === "USER") {
-      navigate("/dashboard", {
+    if (formData.role === "ADMIN") {
+      navigate("/admin", {
         state: {
           email: formData.email,
         },
@@ -66,9 +66,11 @@ function LoginPage() {
       return;
     }
 
-    alert(
-      "Admin dashboard will be connected later. Member 1 can integrate the admin authentication flow with the backend."
-    );
+    navigate("/dashboard", {
+      state: {
+        email: formData.email,
+      },
+    });
   };
 
   const handleMouseMove = (event) => {

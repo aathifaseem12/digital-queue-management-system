@@ -1,8 +1,10 @@
+import { authPost } from "../api/auth";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -13,6 +15,7 @@ function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -46,31 +49,18 @@ function LoginPage() {
     return newErrors;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
+    if (submitting) return;
     const validationErrors = validateForm();
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    if (formData.role === "ADMIN") {
-      navigate("/admin", {
-        state: {
-          email: formData.email,
-        },
-      });
-
-      return;
-    }
-
-    navigate("/dashboard", {
-      state: {
-        email: formData.email,
-      },
-    });
+    if (Object.keys(validationErrors).length) { setErrors(validationErrors); return; }
+    setSubmitting(true);
+    setErrors({});
+    try {
+      const user = await authPost("/login", { email: formData.email.trim(), password: formData.password });
+      navigate(user.role === "ADMIN" ? "/admin" : "/dashboard", { state: { email: user.email }, replace: true });
+    } catch (error) { setErrors({ server: error.message }); }
+    finally { setSubmitting(false); }
   };
 
   const handleMouseMove = (event) => {
@@ -203,8 +193,11 @@ function LoginPage() {
           </div>
 
           <form className="login-form" onSubmit={handleSubmit}>
+            {location.state?.registered && <p role="status">Account created. Sign in to continue.</p>}
+            {errors.server && <p className="error-message" role="alert">{errors.server}</p>}
             <div className="role-section">
               <label className="field-label">Login as</label>
+              <small>Your account determines which dashboard opens.</small>
 
               <div className="role-selector">
                 <label
@@ -326,7 +319,7 @@ function LoginPage() {
             <label className="remember-option">
               <input
                 type="checkbox"
-                name="rememberMe"
+                name="rememberMe" disabled title="Persistent login is coming later"
                 checked={formData.rememberMe}
                 onChange={handleChange}
               />
@@ -334,8 +327,8 @@ function LoginPage() {
               <span>Remember me on this device</span>
             </label>
 
-            <button className="login-button" type="submit">
-              Sign in
+            <button className="login-button" type="submit" disabled={submitting}>
+              {submitting ? "Signing in…" : "Sign in"}
               <span>→</span>
             </button>
 

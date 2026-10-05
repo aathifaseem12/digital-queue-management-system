@@ -1,3 +1,4 @@
+import { logout } from "../api/auth";
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./DashboardPage.css";
@@ -71,11 +72,11 @@ const services = [
   },
 ];
 
-function DashboardPage() {
+function DashboardPage({ user }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const email = location.state?.email || "user@queueless.com";
+  const email = user.email || location.state?.email || "user@queueless.com";
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
@@ -140,8 +141,8 @@ function DashboardPage() {
     showNotification("You have left the current queue.");
   };
 
-  const handleLogout = () => {
-    navigate("/login");
+  const handleLogout = async () => {
+    try { await logout(); navigate("/login", { replace: true }); } catch (error) { showNotification(error.message); }
   };
 
   return (

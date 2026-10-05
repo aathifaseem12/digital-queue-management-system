@@ -1,0 +1,9 @@
+CREATE TABLE auth_accounts (
+ id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ full_name VARCHAR(100) NOT NULL,
+ email VARCHAR(254) NOT NULL,
+ password_hash VARCHAR(255) NOT NULL,
+ role VARCHAR(10) NOT NULL DEFAULT 'USER',
+ CONSTRAINT uk_auth_email UNIQUE (email),
+ CONSTRAINT chk_auth_role CHECK (role IN ('USER','ADMIN'))
+);

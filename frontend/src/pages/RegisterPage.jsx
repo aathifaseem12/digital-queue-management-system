@@ -1,3 +1,4 @@
+import { authPost } from "../api/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./RegisterPage.css";
@@ -16,6 +17,7 @@ function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -65,21 +67,18 @@ function RegisterPage() {
     return newErrors;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
+    if (submitting) return;
     const validationErrors = validateForm();
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    console.log("Registration data:", formData);
-
-    alert("Account created successfully!");
-
-    navigate("/login");
+    if (Object.keys(validationErrors).length) { setErrors(validationErrors); return; }
+    setSubmitting(true);
+    setErrors({});
+    try {
+      await authPost("/register", { fullName: formData.fullName.trim(), email: formData.email.trim(), password: formData.password });
+      navigate("/login", { replace: true, state: { registered: true } });
+    } catch (error) { setErrors({ server: error.message }); }
+    finally { setSubmitting(false); }
   };
 
   const getPasswordStrength = () => {
@@ -215,6 +214,7 @@ function RegisterPage() {
           </div>
 
           <form className="register-form" onSubmit={handleSubmit}>
+            {errors.server && <p className="error-message" role="alert">{errors.server}</p>}
             {/* FULL NAME */}
 
             <div className="register-field">
@@ -386,8 +386,8 @@ function RegisterPage() {
 
             {/* BUTTON */}
 
-            <button className="register-submit" type="submit">
-              <span>Create account</span>
+            <button className="register-submit" type="submit" disabled={submitting}>
+              <span>{submitting ? "Creating account…" : "Create account"}</span>
               <span className="register-arrow">→</span>
             </button>
 

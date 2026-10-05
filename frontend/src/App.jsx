@@ -1,3 +1,4 @@
+import ProtectedRoute from "./ProtectedRoute";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import LoginPage from "./pages/LoginPage";
@@ -16,9 +17,9 @@ function App() {
 
       <Route path="/register" element={<RegisterPage />} />
 
-      <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
 
-      <Route path="/admin" element={<AdminDashboardPage />} />
+      <Route path="/admin" element={<ProtectedRoute role="ADMIN"><AdminDashboardPage /></ProtectedRoute>} />
 
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

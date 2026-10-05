@@ -1,3 +1,4 @@
+import { logout } from "../api/auth";
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./AdminDashboardPage.css";
@@ -76,11 +77,11 @@ const initialQueue = [
   },
 ];
 
-function AdminDashboardPage() {
+function AdminDashboardPage({ user }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const email = location.state?.email || "admin@queueless.com";
+  const email = user.email || location.state?.email || "admin@queueless.com";
 
   const [services, setServices] = useState(initialServices);
   const [queue, setQueue] = useState(initialQueue);
@@ -149,6 +150,7 @@ function AdminDashboardPage() {
     }, 2800);
   };
 
+  const handleLogout = async () => { try { await logout(); navigate("/login", { replace: true }); } catch (error) { notify(error.message); } };
   const callNext = () => {
     const nextCustomer = queue.find(
       (entry) => entry.status === "WAITING"
@@ -314,7 +316,7 @@ function AdminDashboardPage() {
         <button
           type="button"
           className="admin-sidebar-logout"
-          onClick={() => navigate("/login")}
+          onClick={handleLogout}
         >
           ← Sign out
         </button>
@@ -352,7 +354,7 @@ function AdminDashboardPage() {
 
                 <button
                   type="button"
-                  onClick={() => navigate("/login")}
+                  onClick={handleLogout}
                 >
                   Sign out
                 </button>

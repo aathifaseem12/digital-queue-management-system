@@ -832,4 +832,143 @@ button {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
+  /* =========================
+   REGISTRATION PAGE
+========================= */
+
+.register-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  background: #ffffff;
+}
+
+.register-side-panel {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  padding: 45px 60px;
+  background:
+    linear-gradient(145deg, rgba(8, 40, 72, 0.98), rgba(14, 86, 116, 0.96)),
+    #0a3658;
+  color: white;
+}
+
+.register-brand-content {
+  position: relative;
+  z-index: 2;
+  min-height: calc(100vh - 90px);
+  display: flex;
+  flex-direction: column;
+}
+
+.register-message {
+  margin: auto 0;
+  max-width: 520px;
+}
+
+.register-message h1 {
+  margin: 0;
+  font-size: clamp(48px, 5vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -3px;
+}
+
+.register-message h1 span {
+  color: #36d7c3;
+}
+
+.register-message > p {
+  margin-top: 24px;
+  color: #bed0dc;
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.register-benefits {
+  margin-top: 35px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #bcd3dc;
+  font-size: 14px;
+}
+
+.register-benefits span {
+  padding: 12px 15px;
+  border: 1px solid rgba(69, 221, 204, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+}
+
+.register-form-panel {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 45px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(36, 199, 182, 0.07), transparent 24%),
+    #ffffff;
+}
+
+.register-container {
+  width: 100%;
+  max-width: 465px;
+  animation: formArrival 0.7s ease-out;
+}
+
+.back-login-button {
+  margin-bottom: 30px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #168d83;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.back-login-button:hover {
+  text-decoration: underline;
+}
+
+.already-account {
+  margin-top: 22px;
+  text-align: center;
+  color: #7b8992;
+  font-size: 12px;
+}
+
+.already-account button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #13a99b;
+  font-weight: 800;
+}
+
+.already-account button:hover {
+  text-decoration: underline;
+}
+
+.terms-error {
+  margin-top: -16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 900px) {
+  .register-page {
+    grid-template-columns: 1fr;
+  }
+
+  .register-side-panel {
+    display: none;
+  }
+
+  .register-form-panel {
+    padding: 35px 22px;
+  }
+}
 }

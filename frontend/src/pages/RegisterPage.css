@@ -1,0 +1,1041 @@
+* {
+  box-sizing: border-box;
+}
+
+.register-page {
+  width: 100%;
+  min-height: 100vh;
+
+  display: grid;
+  grid-template-columns: 48% 52%;
+
+  background: #ffffff;
+
+  font-family:
+    Inter,
+    Arial,
+    Helvetica,
+    sans-serif;
+}
+
+/* =========================================
+   LEFT SIDE
+========================================= */
+
+.register-brand-panel {
+  min-height: 100vh;
+
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 38px 55px;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(7, 43, 72, 0.99),
+      rgba(9, 76, 103, 0.97)
+    ),
+    #07314e;
+}
+
+.register-brand-content {
+  position: relative;
+  z-index: 5;
+
+  min-height: calc(100vh - 76px);
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* LOGO */
+
+.register-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  width: fit-content;
+}
+
+.register-logo-icon {
+  width: 43px;
+  height: 43px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 13px;
+
+  color: white;
+
+  font-size: 22px;
+  font-weight: 900;
+
+  background: linear-gradient(
+    135deg,
+    #27d5c2,
+    #19bfb6
+  );
+
+  box-shadow:
+    0 10px 30px rgba(30, 201, 187, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.register-logo:hover .register-logo-icon {
+  transform: rotate(-5deg) scale(1.06);
+
+  box-shadow:
+    0 12px 35px rgba(30, 201, 187, 0.34),
+    0 0 20px rgba(39, 213, 194, 0.13);
+}
+
+.register-logo-text {
+  color: white;
+
+  font-size: 25px;
+  font-weight: 850;
+
+  letter-spacing: -0.8px;
+}
+
+.register-logo-text span {
+  color: #31d7c5;
+}
+
+/* HERO */
+
+.register-hero {
+  width: 100%;
+  max-width: 555px;
+
+  margin: auto 0;
+
+  animation: registerHeroIn 0.7s ease-out;
+}
+
+.register-badge {
+  width: fit-content;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 23px;
+
+  padding: 7px 13px;
+
+  border: 1px solid rgba(80, 226, 210, 0.3);
+
+  border-radius: 30px;
+
+  color: #81eadf;
+
+  background: rgba(54, 210, 195, 0.07);
+
+  backdrop-filter: blur(10px);
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 1.7px;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #48dfce;
+
+  box-shadow: 0 0 12px rgba(72, 223, 206, 0.9);
+
+  animation: registerPulse 2s infinite;
+}
+
+.register-hero h1 {
+  margin: 0;
+
+  color: white;
+
+  font-size: clamp(50px, 5.1vw, 76px);
+
+  line-height: 0.98;
+
+  letter-spacing: -3.2px;
+
+  font-weight: 850;
+}
+
+.register-hero h1 span {
+  color: #34d6c3;
+}
+
+.register-description {
+  max-width: 505px;
+
+  margin: 25px 0 31px;
+
+  color: #bfd1db;
+
+  font-size: 16px;
+
+  line-height: 1.72;
+}
+
+/* BENEFITS */
+
+.register-benefits {
+  display: flex;
+  flex-direction: column;
+
+  gap: 15px;
+}
+
+.register-benefit {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 13px;
+}
+
+.benefit-icon {
+  width: 31px;
+  height: 31px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid rgba(70, 224, 206, 0.17);
+
+  border-radius: 9px;
+
+  color: #49e0cf;
+
+  background: rgba(51, 210, 194, 0.1);
+
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.register-benefit strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #ffffff;
+
+  font-size: 14px;
+}
+
+.register-benefit p {
+  margin: 0;
+
+  color: #9fb9c7;
+
+  font-size: 12px;
+}
+
+/* GLASS PREVIEW */
+
+.register-preview {
+  max-width: 505px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  margin-top: 27px;
+
+  padding: 14px 16px;
+
+  border: 1px solid rgba(91, 230, 214, 0.14);
+
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 15px 35px rgba(0, 0, 0, 0.08);
+
+  animation: registerFloating 5s ease-in-out infinite;
+}
+
+.preview-icon {
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  background: rgba(49, 215, 197, 0.12);
+
+  font-size: 17px;
+}
+
+.register-preview > div:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.register-preview span {
+  color: #91acba;
+
+  font-size: 10px;
+}
+
+.register-preview strong {
+  color: white;
+
+  font-size: 13px;
+}
+
+.preview-status {
+  margin-left: auto;
+
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  color: #77e5d8;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 0.7px;
+}
+
+.preview-status span {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #46dfcd;
+
+  box-shadow: 0 0 9px rgba(70, 223, 205, 0.65);
+}
+
+.register-footer {
+  margin: 0;
+
+  color: #698ca1;
+
+  font-size: 11px;
+}
+
+/* GRID */
+
+.register-grid {
+  position: absolute;
+
+  inset: 0;
+
+  opacity: 0.05;
+
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.28) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.28) 1px,
+      transparent 1px
+    );
+
+  background-size: 52px 52px;
+}
+
+/* ORBS */
+
+.register-orb {
+  position: absolute;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.register-orb-one {
+  width: 390px;
+  height: 390px;
+
+  top: -150px;
+  right: -130px;
+
+  border: 1px solid rgba(74, 218, 203, 0.08);
+
+  background: rgba(48, 214, 199, 0.025);
+
+  animation: registerOrbOne 11s ease-in-out infinite;
+}
+
+.register-orb-two {
+  width: 220px;
+  height: 220px;
+
+  bottom: 7%;
+  left: -90px;
+
+  border: 1px solid rgba(76, 220, 204, 0.08);
+
+  background: rgba(48, 214, 199, 0.03);
+
+  animation: registerOrbTwo 12s ease-in-out infinite;
+}
+
+.register-orb-three {
+  width: 80px;
+  height: 80px;
+
+  top: 43%;
+  right: 12%;
+
+  background: rgba(52, 215, 195, 0.055);
+
+  animation: registerFloating 8s ease-in-out infinite;
+}
+
+/* =========================================
+   RIGHT SIDE
+========================================= */
+
+.register-form-side {
+  min-height: 100vh;
+
+  position: relative;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 34px 55px;
+
+  background:
+    radial-gradient(
+      circle at 90% 5%,
+      rgba(26, 190, 176, 0.065),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 10% 90%,
+      rgba(22, 147, 163, 0.035),
+      transparent 28%
+    ),
+    #ffffff;
+}
+
+.register-form-glow {
+  position: absolute;
+
+  width: 360px;
+  height: 360px;
+
+  top: -150px;
+  right: -130px;
+
+  border-radius: 50%;
+
+  background: rgba(32, 202, 186, 0.04);
+
+  pointer-events: none;
+}
+
+.register-form-container {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+
+  max-width: 480px;
+
+  animation: registerFormIn 0.7s ease-out;
+}
+
+/* BACK */
+
+.register-back-button {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 25px;
+
+  padding: 0;
+
+  border: none;
+
+  color: #68808d;
+
+  background: transparent;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.register-back-button span {
+  font-size: 17px;
+}
+
+.register-back-button:hover {
+  color: #10a99a;
+
+  transform: translateX(-2px);
+}
+
+/* HEADING */
+
+.register-heading {
+  margin-bottom: 26px;
+}
+
+.register-heading > p {
+  margin: 0 0 7px;
+
+  color: #10aa9b;
+
+  font-size: 11px;
+
+  font-weight: 850;
+
+  letter-spacing: 1.6px;
+}
+
+.register-heading h2 {
+  margin: 0 0 8px;
+
+  color: #10283a;
+
+  font-size: 32px;
+
+  line-height: 1.15;
+
+  letter-spacing: -1.15px;
+}
+
+.register-heading > span {
+  color: #73838d;
+
+  font-size: 13px;
+
+  line-height: 1.55;
+}
+
+/* FORM */
+
+.register-form {
+  width: 100%;
+}
+
+.register-field {
+  margin-bottom: 15px;
+}
+
+.register-field label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #263947;
+
+  font-size: 12px;
+
+  font-weight: 750;
+}
+
+/* INPUT */
+
+.register-input {
+  width: 100%;
+  height: 49px;
+
+  display: flex;
+  align-items: center;
+
+  border: 1.5px solid #dce5e9;
+
+  border-radius: 11px;
+
+  background: rgba(255, 255, 255, 0.85);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.register-input:focus-within {
+  border-color: #1bbdad;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 0 0 4px rgba(27, 189, 173, 0.07),
+    0 8px 20px rgba(24, 116, 122, 0.04);
+}
+
+.register-input-error {
+  border-color: #db5b5b;
+}
+
+.register-input-icon {
+  width: 45px;
+
+  flex-shrink: 0;
+
+  text-align: center;
+
+  color: #889aa4;
+
+  font-size: 13px;
+}
+
+.register-input input {
+  flex: 1;
+
+  min-width: 0;
+
+  height: 100%;
+
+  border: none;
+  outline: none;
+
+  padding: 0 10px 0 0;
+
+  color: #253844;
+
+  background: transparent;
+
+  font-size: 13px;
+}
+
+.register-input input::placeholder {
+  color: #a9b5bc;
+}
+
+.register-show-password {
+  margin-right: 13px;
+
+  padding: 5px;
+
+  border: none;
+
+  color: #138d83;
+
+  background: transparent;
+
+  font-size: 10px;
+
+  font-weight: 800;
+}
+
+.register-error {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #d85050;
+
+  font-size: 10px;
+}
+
+/* PASSWORD STRENGTH */
+
+.password-strength {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin-top: 7px;
+}
+
+.strength-bars {
+  flex: 1;
+
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 4px;
+}
+
+.strength-bars span {
+  height: 3px;
+
+  border-radius: 30px;
+
+  background: #e8edef;
+
+  transition: background 0.25s ease;
+}
+
+.strength-bars span.active {
+  background: #22baa9;
+}
+
+.password-strength small {
+  min-width: 35px;
+
+  color: #71838c;
+
+  font-size: 9px;
+}
+
+/* TERMS */
+
+.register-terms {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 8px;
+
+  width: fit-content;
+
+  margin: 5px 0 19px;
+
+  color: #697c87;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.register-terms input {
+  width: 14px;
+  height: 14px;
+
+  margin-top: 1px;
+
+  accent-color: #1bb7a7;
+}
+
+.register-terms button {
+  padding: 0;
+
+  border: none;
+
+  color: #119e91;
+
+  background: transparent;
+
+  font-size: inherit;
+
+  font-weight: 750;
+}
+
+.register-terms-error {
+  margin-top: -13px;
+  margin-bottom: 14px;
+}
+
+/* CREATE ACCOUNT */
+
+.register-submit {
+  position: relative;
+
+  overflow: hidden;
+
+  width: 100%;
+  height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  border: none;
+
+  border-radius: 11px;
+
+  color: white;
+
+  background: linear-gradient(
+    135deg,
+    #11aa9b,
+    #1692a2
+  );
+
+  box-shadow: 0 10px 25px rgba(18, 165, 157, 0.17);
+
+  font-size: 13px;
+  font-weight: 850;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.register-submit::before {
+  content: "";
+
+  position: absolute;
+
+  top: -70%;
+  left: -40%;
+
+  width: 28%;
+  height: 240%;
+
+  transform: rotate(20deg);
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.28),
+    transparent
+  );
+
+  transition: left 0.6s ease;
+}
+
+.register-submit:hover {
+  transform: translateY(-1px);
+
+  box-shadow: 0 14px 29px rgba(18, 165, 157, 0.23);
+}
+
+.register-submit:hover::before {
+  left: 120%;
+}
+
+.register-arrow {
+  font-size: 18px;
+}
+
+/* DIVIDER */
+
+.register-divider {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 20px 0;
+}
+
+.register-divider span {
+  flex: 1;
+
+  height: 1px;
+
+  background: #e6ecef;
+}
+
+.register-divider p {
+  margin: 0;
+
+  color: #8b989f;
+
+  font-size: 10px;
+}
+
+/* LOGIN */
+
+.register-login-button {
+  width: 100%;
+  height: 46px;
+
+  border: 1.5px solid #dce5e8;
+
+  border-radius: 11px;
+
+  color: #314650;
+
+  background: white;
+
+  font-size: 12px;
+  font-weight: 750;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.register-login-button:hover {
+  border-color: #8accc5;
+
+  background: #fafffe;
+
+  transform: translateY(-1px);
+}
+
+.register-security {
+  margin: 20px 0 0;
+
+  text-align: center;
+
+  color: #9ba7ad;
+
+  font-size: 9px;
+}
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes registerHeroIn {
+  from {
+    opacity: 0;
+
+    transform: translateX(-18px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateX(0);
+  }
+}
+
+@keyframes registerFormIn {
+  from {
+    opacity: 0;
+
+    transform: translateY(17px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+@keyframes registerFloating {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes registerPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(72, 223, 206, 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 8px rgba(72, 223, 206, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(72, 223, 206, 0);
+  }
+}
+
+@keyframes registerOrbOne {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(-25px, 25px);
+  }
+}
+
+@keyframes registerOrbTwo {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(28px, -20px);
+  }
+}
+
+/* =========================================
+   TABLET / MOBILE
+========================================= */
+
+@media (max-width: 900px) {
+  .register-page {
+    display: block;
+  }
+
+  .register-brand-panel {
+    display: none;
+  }
+
+  .register-form-side {
+    min-height: 100vh;
+
+    padding: 32px 22px;
+  }
+
+  .register-form-container {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 500px) {
+  .register-form-side {
+    align-items: flex-start;
+
+    padding: 26px 18px;
+  }
+
+  .register-heading h2 {
+    font-size: 27px;
+  }
+
+  .register-back-button {
+    margin-bottom: 28px;
+  }
+
+  .register-field {
+    margin-bottom: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .register-page *,
+  .register-page *::before,
+  .register-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
+  }
+}

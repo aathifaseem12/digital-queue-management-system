@@ -56,10 +56,18 @@ function LoginPage() {
       return;
     }
 
-    console.log("Login data:", formData);
+    if (formData.role === "USER") {
+      navigate("/dashboard", {
+        state: {
+          email: formData.email,
+        },
+      });
+
+      return;
+    }
 
     alert(
-      `Login UI working successfully!\n\nRole: ${formData.role}\nEmail: ${formData.email}`
+      "Admin dashboard will be connected later. Member 1 can integrate the admin authentication flow with the backend."
     );
   };
 
@@ -114,6 +122,7 @@ function LoginPage() {
             <div className="feature-list">
               <div className="feature">
                 <div className="feature-icon">✓</div>
+
                 <div>
                   <h3>Join remotely</h3>
                   <p>Reserve your place without standing in line.</p>
@@ -122,6 +131,7 @@ function LoginPage() {
 
               <div className="feature">
                 <div className="feature-icon">✓</div>
+
                 <div>
                   <h3>Live queue updates</h3>
                   <p>Know your position and estimated waiting time.</p>
@@ -130,6 +140,7 @@ function LoginPage() {
 
               <div className="feature">
                 <div className="feature-icon">✓</div>
+
                 <div>
                   <h3>Simple & efficient</h3>
                   <p>A smoother experience for customers and staff.</p>
@@ -174,13 +185,18 @@ function LoginPage() {
             © 2026 QueueLess. Digital Queue Management System.
           </p>
         </div>
+
+        <div className="decoration decoration-one"></div>
+        <div className="decoration decoration-two"></div>
       </section>
 
       <section className="form-panel" onMouseMove={handleMouseMove}>
         <div className="login-container">
           <div className="login-heading">
             <p className="welcome-label">WELCOME BACK</p>
+
             <h2>Sign in to your account</h2>
+
             <p>Enter your details below to continue to QueueLess.</p>
           </div>
 
@@ -250,6 +266,7 @@ function LoginPage() {
                   placeholder="name@example.com"
                   value={formData.email}
                   onChange={handleChange}
+                  autoComplete="email"
                 />
               </div>
 
@@ -287,12 +304,13 @@ function LoginPage() {
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}
+                  autoComplete="current-password"
                 />
 
                 <button
                   type="button"
                   className="show-password"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword((previous) => !previous)}
                 >
                   {showPassword ? "Hide" : "Show"}
                 </button>

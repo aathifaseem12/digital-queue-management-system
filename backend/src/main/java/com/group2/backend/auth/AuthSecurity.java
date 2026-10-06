@@ -32,8 +32,8 @@ public class AuthSecurity {
   var source=new UrlBasedCorsConfigurationSource(); source.registerCorsConfiguration("/api/**",configuration);
   return source;
  }
- @Bean SecurityFilterChain security(HttpSecurity http,SecurityContextRepository contexts) throws Exception {
-  http.cors(cors -> {}).securityContext(c -> c.securityContextRepository(contexts))
+ @Bean SecurityFilterChain security(HttpSecurity http,SecurityContextRepository contexts, @org.springframework.beans.factory.annotation.Qualifier("cors") CorsConfigurationSource corsConfiguration) throws Exception {
+  http.cors(cors -> cors.configurationSource(corsConfiguration)).securityContext(c -> c.securityContextRepository(contexts))
    .authorizeHttpRequests(a -> a.requestMatchers("/api/auth/csrf","/api/auth/register","/api/auth/login","/error").permitAll()
     .requestMatchers("/api/admin/**").hasRole("ADMIN").anyRequest().authenticated())
    .requestCache(c -> c.disable())

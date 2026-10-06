@@ -47,8 +47,27 @@ cd backend
 ```
 
 Registration returns to login only after the database write succeeds. Login uses the database role regardless of the visual role selector. Remember-me is disabled until persistent sessions are implemented.
-The test profile uses an isolated H2 database in MySQL mode and runs the same Flyway migration. Live MySQL must still be checked separately.
+The test profile uses an isolated H2 database in MySQL mode and runs the same Flyway migration. Live MySQL verification was completed on 2026-10-06; see the results below.
 Session persistence explicitly saves Spring Security's context, following https://docs.spring.io/spring-security/reference/servlet/authentication/session-management.html.
 ## Verification completed
-Java 21 backend build passed: 5 tests, 0 failures/errors. Tests use H2 MySQL mode and the Flyway migration. Frontend lint and production build passed. Live MySQL verification is pending creation of the QueueLess database and local credentials. Integration branch: feature/member2-auth-integration.
+Java 21 backend package passed: 6 tests, 0 failures/errors, against real MySQL 8.4 on 2026-10-06. The Flyway migration applied and Hibernate validated the schema. Live HTTP checks passed for registration, validation, duplicate emails, password hashing in MySQL, login, session restoration, USER admin restrictions, database ADMIN roles, and logout. Browser preflight allows the configured React origin and credentials; other origins are rejected. Frontend lint and production build passed on the unchanged React implementation.
 A compatible Java 21 compiler is available in C:\Users\malha\.vscode\extensions\redhat.java-1.56.0-win32-x64\jre\21.0.12.1-win32-x86_64 (set JAVA_HOME to that directory for this machine).
+
+## Repeating real MySQL tests
+Use a dedicated disposable test database. The test suite deletes accounts in the configured database before each test.
+
+```powershell
+$env:SPRING_DATASOURCE_URL = 'jdbc:mysql://127.0.0.1:3307/queueless_test'
+$env:SPRING_DATASOURCE_USERNAME = 'queueless'
+$env:SPRING_DATASOURCE_PASSWORD = $env:DB_PASSWORD
+.\mvnw.cmd test
+Remove-Item Env:SPRING_DATASOURCE_URL, Env:SPRING_DATASOURCE_USERNAME, Env:SPRING_DATASOURCE_PASSWORD
+```
+
+Use your own server port and credentials. Default tests continue to use H2 unless datasource environment variables override them.
+
+## This computer's local setup
+A separate MySQL 8.4 instance runs on 127.0.0.1:3307. The existing MySQL80 service on its original port was preserved. Databases: queueless (application) and queueless_test (automated tests).
+Credentials and data are outside this Git repository; credentials are encrypted for the current Windows user. No database passwords were committed.
+The local startup helper is C:\Users\malha\.codex\.chatgpt-projects\g-p-6ab8c962f8c08191a05f3aecf711026a\start-queueless-backend.ps1. Run it in PowerShell to start the database and API using the saved credentials, then run npm run dev from frontend.
+For another machine, follow the normal MySQL setup above. No test account remains in the application database after the live checks.

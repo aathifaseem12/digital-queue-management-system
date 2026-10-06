@@ -64,4 +64,17 @@ class AuthIntegrationTests {
   String next=com.jayway.jsonpath.JsonPath.read(fresh.getResponse().getContentAsString(),"$.token");
   mvc.perform(post("/api/auth/logout").session(session).header("X-CSRF-TOKEN",next)).andExpect(status().isNoContent());
  }
+ @Test void allowsFrontendPreflightAndRejectsOtherOrigins() throws Exception {
+  mvc.perform(options("/api/auth/login")
+    .header("Origin","http://localhost:5173")
+    .header("Access-Control-Request-Method","POST")
+    .header("Access-Control-Request-Headers","content-type,x-csrf-token"))
+   .andExpect(status().isOk())
+   .andExpect(header().string("Access-Control-Allow-Origin","http://localhost:5173"))
+   .andExpect(header().string("Access-Control-Allow-Credentials","true"));
+  mvc.perform(options("/api/auth/login")
+    .header("Origin","https://untrusted.example")
+    .header("Access-Control-Request-Method","POST"))
+   .andExpect(status().isForbidden());
+ }
 }

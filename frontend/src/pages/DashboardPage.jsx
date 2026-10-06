@@ -1,76 +1,11 @@
+import useDashboard from "../api/useDashboard";
+import { loadUserDashboard, joinQueue, leaveQueue as leaveApiQueue } from "../api/queues";
 import { logout } from "../api/auth";
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./DashboardPage.css";
 
-const services = [
-  {
-    id: 1,
-    name: "General Service",
-    description: "General enquiries and customer assistance.",
-    category: "General",
-    queueCode: "A",
-    waiting: 8,
-    people: 4,
-    status: "Open",
-    icon: "◎",
-  },
-  {
-    id: 2,
-    name: "Document Verification",
-    description: "Submit and verify required documents.",
-    category: "Documents",
-    queueCode: "B",
-    waiting: 14,
-    people: 7,
-    status: "Open",
-    icon: "▤",
-  },
-  {
-    id: 3,
-    name: "Payment Counter",
-    description: "Complete service and registration payments.",
-    category: "Payments",
-    queueCode: "C",
-    waiting: 5,
-    people: 2,
-    status: "Open",
-    icon: "◈",
-  },
-  {
-    id: 4,
-    name: "Registration Desk",
-    description: "Registration and account-related services.",
-    category: "Registration",
-    queueCode: "D",
-    waiting: 20,
-    people: 10,
-    status: "Busy",
-    icon: "◇",
-  },
-  {
-    id: 5,
-    name: "Customer Support",
-    description: "Get help with service-related issues.",
-    category: "General",
-    queueCode: "E",
-    waiting: 10,
-    people: 5,
-    status: "Open",
-    icon: "◉",
-  },
-  {
-    id: 6,
-    name: "Priority Service",
-    description: "Dedicated assistance for priority customers.",
-    category: "Priority",
-    queueCode: "P",
-    waiting: 3,
-    people: 1,
-    status: "Open",
-    icon: "✦",
-  },
-];
+const EMPTY = [];
 
 function DashboardPage({ user }) {
   const navigate = useNavigate();
@@ -81,7 +16,11 @@ function DashboardPage({ user }) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [selectedService, setSelectedService] = useState(null);
-  const [currentQueue, setCurrentQueue] = useState(null);
+  const { data, error, loading, refresh } = useDashboard(loadUserDashboard);
+  const services = data?.services || EMPTY;
+  const currentQueue = data?.currentQueue || null;
+  const [busy, setBusy] = useState(false);
+  const [actionError, setActionError] = useState("");
   const [notification, setNotification] = useState("");
   const [showProfile, setShowProfile] = useState(false);
 
@@ -105,7 +44,7 @@ function DashboardPage({ user }) {
 
       return matchesSearch && matchesCategory;
     });
-  }, [search, category]);
+  }, [services, search, category]);
 
   const showNotification = (message) => {
     setNotification(message);
@@ -115,38 +54,32 @@ function DashboardPage({ user }) {
     }, 3000);
   };
 
-  const confirmJoinQueue = () => {
-    if (!selectedService) return;
-
-    const queueNumber = `${selectedService.queueCode}-${Math.floor(
-      10 + Math.random() * 80
-    )}`;
-
-    setCurrentQueue({
-      ...selectedService,
-      queueNumber,
-      position: selectedService.people + 1,
-    });
-
-    setSelectedService(null);
-
-    showNotification(
-      `Successfully joined ${selectedService.name}. Queue number: ${queueNumber}`
-    );
+  const confirmJoinQueue = async () => {
+    if (!selectedService || busy) return;
+    setBusy(true); setActionError("");
+    try {
+      const queue = await joinQueue(selectedService.id);
+      setSelectedService(null);
+      await refresh();
+      showNotification("Joined queue " + queue.ticketNumber);
+    } catch (failure) { setActionError(failure.message); }
+    finally { setBusy(false); }
   };
-
-  const leaveQueue = () => {
-    setCurrentQueue(null);
-
-    showNotification("You have left the current queue.");
+  const leaveQueue = async () => {
+    if (busy) return;
+    setBusy(true); setActionError("");
+    try { await leaveApiQueue(); await refresh(); showNotification("You have left the queue."); }
+    catch (failure) { setActionError(failure.message); }
+    finally { setBusy(false); }
   };
-
   const handleLogout = async () => {
     try { await logout(); navigate("/login", { replace: true }); } catch (error) { showNotification(error.message); }
   };
 
   return (
     <main className="dashboard-page">
+      {loading && <p role="status">Loading services and your queue…</p>}
+      {(error || actionError) && <p role="alert">{actionError || error} <button onClick={refresh}>Refresh</button></p>}
       {notification && (
         <div className="dashboard-toast">
           <span className="toast-check">✓</span>
@@ -278,7 +211,7 @@ function DashboardPage({ user }) {
                 </div>
 
                 <div>
-                  <span>Currently waiting for</span>
+                  <span>{currentQueue.status === "SERVING" ? "Now serving" : "Currently waiting for"}</span>
                   <h3>{currentQueue.name}</h3>
                   <p>
                     You can continue using QueueLess while your position
@@ -294,7 +227,7 @@ function DashboardPage({ user }) {
 
               <div className="queue-stat">
                 <span>Your position</span>
-                <strong>#{currentQueue.position}</strong>
+                <strong>{currentQueue.status === "SERVING" ? "Your turn" : "#" + currentQueue.position}</strong>
               </div>
 
               <div className="queue-stat">
@@ -308,7 +241,7 @@ function DashboardPage({ user }) {
               </div>
 
               <button
-                className="leave-queue-button"
+                className="leave-queue-button" disabled={busy}
                 onClick={leaveQueue}
               >
                 Leave queue
@@ -419,12 +352,12 @@ function DashboardPage({ user }) {
 
                   <button
                     className="join-queue-button"
-                    disabled={Boolean(currentQueue)}
-                    onClick={() => setSelectedService(service)}
+                    disabled={loading || busy || Boolean(currentQueue) || service.status === "Closed"}
+                    onClick={() => { setActionError(""); setSelectedService(service); }}
                   >
                     {currentQueue
                       ? "Queue already active"
-                      : "Join queue"}
+                      : service.status === "Closed" ? "Service closed" : "Join queue"}
 
                     {!currentQueue && <span>→</span>}
                   </button>
@@ -539,6 +472,7 @@ function DashboardPage({ user }) {
               </p>
             </div>
 
+            {actionError && <p role="alert">{actionError}</p>}
             <div className="modal-actions">
               <button
                 className="modal-cancel"
@@ -549,7 +483,7 @@ function DashboardPage({ user }) {
 
               <button
                 className="modal-confirm"
-                onClick={confirmJoinQueue}
+                onClick={confirmJoinQueue} disabled={busy}
               >
                 Confirm & join
                 <span>→</span>

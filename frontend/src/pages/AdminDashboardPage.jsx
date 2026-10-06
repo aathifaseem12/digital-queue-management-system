@@ -1,81 +1,11 @@
+import useDashboard from "../api/useDashboard";
+import { loadAdminDashboard, callNext as callNextApi, completeCustomer as completeApi, toggleService as toggleApi, createService } from "../api/queues";
 import { logout } from "../api/auth";
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./AdminDashboardPage.css";
 
-const initialServices = [
-  {
-    id: 1,
-    code: "A",
-    name: "General Service",
-    waiting: 4,
-    served: 28,
-    average: 8,
-    status: "OPEN",
-  },
-  {
-    id: 2,
-    code: "B",
-    name: "Document Verification",
-    waiting: 7,
-    served: 19,
-    average: 14,
-    status: "OPEN",
-  },
-  {
-    id: 3,
-    code: "C",
-    name: "Payment Counter",
-    waiting: 2,
-    served: 34,
-    average: 5,
-    status: "OPEN",
-  },
-  {
-    id: 4,
-    code: "D",
-    name: "Registration Desk",
-    waiting: 10,
-    served: 16,
-    average: 20,
-    status: "BUSY",
-  },
-];
-
-const initialQueue = [
-  {
-    id: 1,
-    ticket: "A-17",
-    customer: "Mohamed Rizwan",
-    service: "General Service",
-    waiting: 7,
-    status: "WAITING",
-  },
-  {
-    id: 2,
-    ticket: "B-23",
-    customer: "Nimal Perera",
-    service: "Document Verification",
-    waiting: 12,
-    status: "WAITING",
-  },
-  {
-    id: 3,
-    ticket: "C-11",
-    customer: "Fathima Azeez",
-    service: "Payment Counter",
-    waiting: 4,
-    status: "SERVING",
-  },
-  {
-    id: 4,
-    ticket: "D-31",
-    customer: "Kasun Silva",
-    service: "Registration Desk",
-    waiting: 18,
-    status: "WAITING",
-  },
-];
+const EMPTY = [];
 
 function AdminDashboardPage({ user }) {
   const navigate = useNavigate();
@@ -83,8 +13,11 @@ function AdminDashboardPage({ user }) {
 
   const email = user.email || location.state?.email || "admin@queueless.com";
 
-  const [services, setServices] = useState(initialServices);
-  const [queue, setQueue] = useState(initialQueue);
+  const { data, error, loading, refresh } = useDashboard(loadAdminDashboard);
+  const services = data?.services || EMPTY;
+  const [busy, setBusy] = useState(false);
+  const [actionError, setActionError] = useState("");
+  const queue = data?.queue || EMPTY;
 
   const [search, setSearch] = useState("");
   const [toast, setToast] = useState("");
@@ -93,38 +26,13 @@ function AdminDashboardPage({ user }) {
 
   const [newService, setNewService] = useState({
     name: "",
-    code: "",
+    code: "", description: "", category: "General", averageWaitMinutes: 5,
   });
 
-  const totalWaiting = useMemo(
-    () =>
-      queue.filter((entry) => entry.status === "WAITING").length,
-    [queue]
-  );
-
-  const totalServed = useMemo(
-    () => services.reduce((total, item) => total + item.served, 0),
-    [services]
-  );
-
-  const averageWait = useMemo(() => {
-    if (services.length === 0) {
-      return 0;
-    }
-
-    const total = services.reduce(
-      (sum, service) => sum + service.average,
-      0
-    );
-
-    return Math.round(total / services.length);
-  }, [services]);
-
-  const activeServices = useMemo(
-    () =>
-      services.filter((service) => service.status !== "CLOSED").length,
-    [services]
-  );
+  const totalWaiting = data?.stats.waiting ?? 0;
+  const totalServed = data?.stats.served ?? 0;
+  const averageWait = data?.stats.averageWait ?? 0;
+  const activeServices = data?.stats.activeServices ?? 0;
 
   const filteredQueue = useMemo(() => {
     const value = search.trim().toLowerCase();
@@ -151,106 +59,25 @@ function AdminDashboardPage({ user }) {
   };
 
   const handleLogout = async () => { try { await logout(); navigate("/login", { replace: true }); } catch (error) { notify(error.message); } };
-  const callNext = () => {
-    const nextCustomer = queue.find(
-      (entry) => entry.status === "WAITING"
-    );
-
-    if (!nextCustomer) {
-      notify("There are no waiting customers.");
-      return;
-    }
-
-    setQueue((current) =>
-      current.map((entry) => {
-        if (entry.status === "SERVING") {
-          return {
-            ...entry,
-            status: "COMPLETED",
-          };
-        }
-
-        if (entry.id === nextCustomer.id) {
-          return {
-            ...entry,
-            status: "SERVING",
-          };
-        }
-
-        return entry;
-      })
-    );
-
-    notify(`Now serving ${nextCustomer.ticket}`);
+  const perform = async (operation, success) => {
+    if (busy) return;
+    setBusy(true); setActionError("");
+    try { const result = await operation(); await refresh(); notify(typeof success === "function" ? success(result) : success); return true; }
+    catch (failure) { setActionError(failure.message); return false; }
+    finally { setBusy(false); }
   };
-
-  const completeCustomer = (id) => {
-    setQueue((current) =>
-      current.map((entry) =>
-        entry.id === id
-          ? {
-              ...entry,
-              status: "COMPLETED",
-            }
-          : entry
-      )
-    );
-
-    notify("Customer marked as completed.");
-  };
-
-  const toggleService = (id) => {
-    setServices((current) =>
-      current.map((service) =>
-        service.id === id
-          ? {
-              ...service,
-              status:
-                service.status === "CLOSED"
-                  ? "OPEN"
-                  : "CLOSED",
-            }
-          : service
-      )
-    );
-  };
-
-  const addService = (event) => {
+  const callNext = () => perform(callNextApi, result => result ? "Now serving " + result.ticket : "No waiting customers in open services.");
+  const completeCustomer = id => perform(() => completeApi(id), "Customer completed.");
+  const toggleService = id => perform(() => toggleApi(id), "Service updated.");
+  const addService = async event => {
     event.preventDefault();
-
-    if (!newService.name.trim() || !newService.code.trim()) {
-      notify("Enter a service name and queue code.");
-      return;
-    }
-
-    setServices((current) => [
-      ...current,
-      {
-        id: Date.now(),
-        code: newService.code
-          .trim()
-          .toUpperCase()
-          .slice(0, 2),
-        name: newService.name.trim(),
-        waiting: 0,
-        served: 0,
-        average: 0,
-        status: "OPEN",
-      },
-    ]);
-
-    setNewService({
-      name: "",
-      code: "",
-    });
-
-    setShowAddService(false);
-
-    notify("New queue service added.");
+    const ok = await perform(() => createService({ ...newService, averageWaitMinutes: Number(newService.averageWaitMinutes) }), "Service created.");
+    if (ok) { setShowAddService(false); setNewService({ name: "", code: "", description: "", category: "General", averageWaitMinutes: 5 }); }
   };
-
   return (
     <main className="admin-page">
+      {loading && <p role="status">Loading dashboard…</p>}
+      {(error || actionError) && <p role="alert">{actionError || error} <button onClick={refresh}>Refresh</button></p>}
       {toast && (
         <div className="admin-toast">
           <span className="admin-toast-icon">✓</span>
@@ -376,7 +203,7 @@ function AdminDashboardPage({ user }) {
               <span className="system-live-dot"></span>
 
               <span className="system-live-text">
-                Real-time queue monitoring active
+                Queue data refreshes every 5 seconds
               </span>
             </div>
           </div>
@@ -384,7 +211,7 @@ function AdminDashboardPage({ user }) {
           <button
             type="button"
             className="admin-hero-action"
-            onClick={callNext}
+            onClick={callNext} disabled={busy || loading}
           >
             Call next customer
             <span>→</span>
@@ -450,7 +277,7 @@ function AdminDashboardPage({ user }) {
             <button
               type="button"
               className="admin-primary-button"
-              onClick={callNext}
+              onClick={callNext} disabled={busy || loading}
             >
               Call next
               <span>→</span>
@@ -527,10 +354,10 @@ function AdminDashboardPage({ user }) {
                       </td>
 
                       <td>
-                        {entry.status !== "COMPLETED" ? (
+                        {entry.status === "SERVING" ? (
                           <button
                             type="button"
-                            className="admin-complete-button"
+                            className="admin-complete-button" disabled={busy}
                             onClick={() =>
                               completeCustomer(entry.id)
                             }
@@ -539,7 +366,7 @@ function AdminDashboardPage({ user }) {
                           </button>
                         ) : (
                           <span className="admin-completed-text">
-                            Done
+                            {entry.status === "COMPLETED" ? "Done" : "—"}
                           </span>
                         )}
                       </td>
@@ -666,7 +493,7 @@ function AdminDashboardPage({ user }) {
           }}
         >
           <form
-            className="admin-modal"
+            className="admin-modal" style={{ maxHeight: "90vh", overflowY: "auto" }}
             onSubmit={addService}
           >
             <button
@@ -677,6 +504,7 @@ function AdminDashboardPage({ user }) {
               ×
             </button>
 
+            {actionError && <p role="alert">{actionError}</p>}
             <div className="admin-modal-icon">+</div>
 
             <p>NEW SERVICE</p>
@@ -692,7 +520,7 @@ function AdminDashboardPage({ user }) {
 
               <input
                 type="text"
-                placeholder="Example: Consultation"
+                required maxLength={120} placeholder="Example: Consultation"
                 value={newService.name}
                 onChange={(event) =>
                   setNewService((current) => ({
@@ -708,7 +536,7 @@ function AdminDashboardPage({ user }) {
 
               <input
                 type="text"
-                maxLength="2"
+                required maxLength="10" pattern="[A-Za-z0-9]+"
                 placeholder="Example: F"
                 value={newService.code}
                 onChange={(event) =>
@@ -720,6 +548,9 @@ function AdminDashboardPage({ user }) {
               />
             </label>
 
+            <label>Description<input required maxLength={255} value={newService.description} onChange={event => setNewService(current => ({...current, description: event.target.value}))} /></label>
+            <label>Category<input required maxLength={60} value={newService.category} onChange={event => setNewService(current => ({...current, category: event.target.value}))} /></label>
+            <label>Minutes per customer<input required type="number" min="1" max="120" value={newService.averageWaitMinutes} onChange={event => setNewService(current => ({...current, averageWaitMinutes: event.target.value}))} /></label>
             <div className="admin-modal-actions">
               <button
                 type="button"
@@ -728,7 +559,7 @@ function AdminDashboardPage({ user }) {
                 Cancel
               </button>
 
-              <button type="submit">
+              <button type="submit" disabled={busy}>
                 Add service
               </button>
             </div>

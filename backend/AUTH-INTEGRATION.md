@@ -16,11 +16,11 @@ POST /api/auth/logout invalidates the session, returns 204. Fetch a fresh CSRF t
 Duplicate normalized emails return 409; invalid credentials return 401; validation returns 400.
 Passwords use BCrypt, limited to 72 UTF-8 bytes. Password hashes never appear in responses.
 Public registration cannot grant ADMIN. Provision admins by an authorized database operation on a registered account. No default admin password is shipped.
-Future /api/admin/** endpoints require ADMIN on the server. All other new endpoints require authentication by default.
+All /api/admin/** endpoints require ADMIN on the server. All other new endpoints require authentication by default.
 
 ## Verification
 Run .\mvnw.cmd test and npm run build. With MySQL running: register, retry with case-varied email (409), log in with a wrong password (401), log in correctly, reload dashboard, verify /me, log out, then verify /me returns 401. Verify USER cannot access admin endpoints.
-Dashboard queue data remains the existing demo data pending Member 1's queue/service APIs.
+Dashboard queue/service APIs are integrated. See DASHBOARD-INTEGRATION.md for the implemented contract and verification results.
 
 ## Team Git rule
 Pull before work: git switch main, git pull --ff-only origin main, git fetch --all --prune.

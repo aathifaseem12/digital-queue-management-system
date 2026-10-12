@@ -118,4 +118,32 @@ class QueueIntegrationTests {
   mvc.perform(get("/api/admin/stats").with(user("admin@test.com").roles("ADMIN"))).andExpect(status().isOk()).andExpect(jsonPath("$.waiting").value(1));
   mvc.perform(post("/api/admin/services").with(user("admin@test.com").roles("ADMIN")).with(csrf()).contentType("application/json").content("{}")).andExpect(status().isBadRequest());
  }
+ @Test void dashboardApiSupportsQueueLifecycle() throws Exception {
+  mvc.perform(get("/api/services").with(user("flow@test.com")))
+   .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(serviceId().intValue()));
+  mvc.perform(get("/api/queues/me").with(user("flow@test.com"))).andExpect(status().isNoContent());
+  mvc.perform(post("/api/queues/join").with(user("flow@test.com")).with(csrf())
+   .contentType("application/json").content("{\"serviceId\":" + serviceId() + "}"))
+   .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("WAITING"));
+  var ticket = operations.currentQueue("flow@test.com").orElseThrow();
+  mvc.perform(get("/api/queues/me").with(user("flow@test.com")))
+   .andExpect(status().isOk()).andExpect(jsonPath("$.ticketNumber").value(ticket.ticketNumber()));
+  mvc.perform(post("/api/admin/queues/call-next").with(user("admin@test.com").roles("ADMIN")).with(csrf()))
+   .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(ticket.id().intValue()))
+   .andExpect(jsonPath("$.status").value("SERVING"));
+  mvc.perform(get("/api/queues/me").with(user("flow@test.com")))
+   .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("SERVING"));
+  mvc.perform(post("/api/admin/queues/" + ticket.id() + "/complete")
+   .with(user("admin@test.com").roles("ADMIN")).with(csrf()))
+   .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("COMPLETED"));
+  mvc.perform(get("/api/queues/me").with(user("flow@test.com"))).andExpect(status().isNoContent());
+  mvc.perform(post("/api/admin/queues/call-next").with(user("admin@test.com").roles("ADMIN")).with(csrf()))
+   .andExpect(status().isNoContent());
+  mvc.perform(post("/api/queues/join").with(user("flow@test.com")).with(csrf())
+   .contentType("application/json").content("{\"serviceId\":" + serviceId() + "}"))
+   .andExpect(status().isOk());
+  mvc.perform(post("/api/queues/leave").with(user("flow@test.com")).with(csrf()))
+   .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("CANCELLED"));
+  mvc.perform(get("/api/queues/me").with(user("flow@test.com"))).andExpect(status().isNoContent());
+ }
 }

@@ -34,6 +34,13 @@ Position and people ahead are calculated within a service. Wait estimates use th
 
 Default backend tests use the test profile with H2: `./mvnw test`. To repeat MySQL tests use the dedicated disposable test database and datasource environment variables described in `AUTH-INTEGRATION.md`. Tests delete their test data; never point them at the application database. Credentials stay outside Git.
 
+## Verification repeated — 2026-10-12
+
+- Fetched origin: main and the Member 2 dashboard branch were both at `4695954`; no new Member 1 commits were present.
+- Preserved the pending user-controller route refactor; `/api/services` and `/api/queues/*` keep their existing URLs through the shared controller prefix.
+- Full backend suite: 16 tests, zero failures/errors, using Java 21 and the isolated H2 test profile. Added an HTTP lifecycle regression covering dashboard service loading, joining, current-ticket restoration, admin call-next/completion, empty queues, rejoining and leaving.
+- Frontend lint and production build passed. Live browser and real MySQL verification were not repeated in this run.
+- This Windows session defaults to Java 17. Before running Maven in PowerShell, set `$env:JAVA_HOME = 'C:\Program Files\Microsoft\jdk-21.0.12.101-hotspot'` and `$env:PATH = "$env:JAVA_HOME\bin;$env:PATH"`. Clear any `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME` and `SPRING_DATASOURCE_PASSWORD` overrides in the test shell to use H2.
 ## Team handoff
 
 Member 1 and Member 2 should pull the latest main before starting clean work, inspect the queue package and these API contracts, and coordinate before changing shared authentication or migrations. Preserve existing uncommitted changes before pulling or switching branches. Test, review, commit and push feature branches after meaningful work; merge through team review. Do not recreate V2 or modify it after it has been applied; use a new migration.

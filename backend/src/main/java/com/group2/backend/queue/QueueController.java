@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+@RequestMapping("/api")
 @RestController
 public class QueueController {
 
@@ -20,14 +21,14 @@ public class QueueController {
         this.operations = operations;
     }
 
-    @GetMapping("/api/services")
+    @GetMapping("/services")
     public List<QueueOperations.ServiceView>
         services() {
 
         return operations.listUserServices();
     }
 
-    @GetMapping("/api/queues/me")
+    @GetMapping("/queues/me")
     public ResponseEntity<
         QueueOperations.QueueView
     > currentQueue(
@@ -45,7 +46,7 @@ public class QueueController {
             );
     }
 
-    @PostMapping("/api/queues/join")
+    @PostMapping("/queues/join")
     public QueueOperations.QueueView
         joinQueue(
             Authentication authentication,
@@ -60,7 +61,7 @@ public class QueueController {
         );
     }
 
-    @PostMapping("/api/queues/leave")
+    @PostMapping("/queues/leave")
     public QueueOperations.QueueView
         leaveQueue(
             Authentication authentication

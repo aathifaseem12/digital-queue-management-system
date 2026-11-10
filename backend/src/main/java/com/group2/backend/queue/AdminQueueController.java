@@ -37,6 +37,14 @@ public class AdminQueueController {
 
         return operations.adminQueue();
     }
+    @GetMapping("/queues/page")
+    public QueueOperations.AdminQueuePage queuePage(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+
+    return operations.adminQueue(page, size);
+}
 
     @PostMapping("/services")
     public QueueOperations.ServiceView

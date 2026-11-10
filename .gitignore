@@ -27,4 +27,5 @@ target/
 
 # Operating system
 .DS_Store
-Thumbs.db
+Thumbs.dbcookies.txt
+cookies.txt

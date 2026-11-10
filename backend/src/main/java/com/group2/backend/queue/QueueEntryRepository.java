@@ -1,9 +1,12 @@
 package com.group2.backend.queue;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +16,14 @@ public interface QueueEntryRepository
 
     List<QueueEntry>
         findAllByOrderByJoinedAtAsc();
+
+    @Query("""
+        select q
+        from QueueEntry q
+        order by q.joinedAt asc, q.id asc
+    """)
+    Page<QueueEntry>
+        findAdminQueuePage(Pageable pageable);
 
     List<QueueEntry>
         findByStatusOrderByJoinedAtAsc(
@@ -72,6 +83,15 @@ public interface QueueEntryRepository
         @Param("serviceId")
         Long serviceId
     );
-    long countByStatusAndCompletedAtGreaterThanEqual(String status, java.time.Instant start);
-    long countByServiceIdAndStatusAndCompletedAtGreaterThanEqual(Long serviceId, String status, java.time.Instant start);
+
+    long countByStatusAndCompletedAtGreaterThanEqual(
+        String status,
+        Instant start
+    );
+
+    long countByServiceIdAndStatusAndCompletedAtGreaterThanEqual(
+        Long serviceId,
+        String status,
+        Instant start
+    );
 }

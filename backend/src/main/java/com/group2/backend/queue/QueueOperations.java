@@ -1,7 +1,9 @@
 package com.group2.backend.queue;
 import java.time.*;
 import java.util.*;
+
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,10 +50,36 @@ public class QueueOperations {
   entries.flush();
   return toQueueView(entry);
  }
- @Transactional(readOnly=true)
- public List<AdminQueueView> adminQueue() {
-  return entries.findAllByOrderByJoinedAtAsc().stream().map(this::toAdminQueueView).toList();
- }
+ @Transactional(readOnly = true)
+public List<AdminQueueView> adminQueue() {
+    return entries
+        .findAllByOrderByJoinedAtAsc()
+        .stream()
+        .map(this::toAdminQueueView)
+        .toList();
+}
+@Transactional(readOnly = true)
+public AdminQueuePage adminQueue(int page, int size) {
+    int safePage = Math.max(page, 0);
+    int safeSize = Math.min(Math.max(size, 1), 50);
+
+    var result = entries.findAdminQueuePage(
+        PageRequest.of(safePage, safeSize)
+    );
+
+    return new AdminQueuePage(
+        result.getContent()
+            .stream()
+            .map(this::toAdminQueueView)
+            .toList(),
+        result.getNumber(),
+        result.getSize(),
+        result.getTotalElements(),
+        result.getTotalPages(),
+        result.hasNext(),
+        result.hasPrevious()
+    );
+}
  public Optional<AdminQueueView> callNext() {
   lock();
   if (!entries.findByStatusOrderByJoinedAtAsc("SERVING").isEmpty())
@@ -127,10 +155,57 @@ public class QueueOperations {
    case "documents" -> "▤"; case "payments" -> "◈"; case "registration" -> "◇"; case "priority" -> "✦"; default -> "◎";
   };
  }
- public record ServiceView(Long id, String code, String name, String description, String category, String status,
-  long peopleWaiting, long estimatedWaitMinutes, String icon, int averageWaitMinutes, long served) {}
- public record QueueView(Long id, String ticketNumber, Long serviceId, String serviceName, String status,
-  long position, long peopleAhead, long estimatedWaitMinutes, String userEmail, Instant joinedAt) {}
- public record AdminQueueView(Long id, String ticket, String customer, String service, long waitingMinutes, String status) {}
- public record StatsView(long waiting, long served, int averageWait, long activeServices) {}
+ public record ServiceView(
+    Long id,
+    String code,
+    String name,
+    String description,
+    String category,
+    String status,
+    long peopleWaiting,
+    long estimatedWaitMinutes,
+    String icon,
+    int averageWaitMinutes,
+    long served
+) {}
+
+public record QueueView(
+    Long id,
+    String ticketNumber,
+    Long serviceId,
+    String serviceName,
+    String status,
+    long position,
+    long peopleAhead,
+    long estimatedWaitMinutes,
+    String userEmail,
+    Instant joinedAt
+) {}
+
+public record AdminQueueView(
+    Long id,
+    String ticket,
+    String customer,
+    String service,
+    long waitingMinutes,
+    String status
+) {}
+
+public record AdminQueuePage(
+    List<AdminQueueView> content,
+    int page,
+    int size,
+    long totalElements,
+    int totalPages,
+    boolean hasNext,
+    boolean hasPrevious
+) {}
+
+public record StatsView(
+    long waiting,
+    long served,
+    int averageWait,
+    long activeServices
+) {}
+
 }
